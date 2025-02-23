@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    /* Container para a logo, que ficará fora do bloco branco */
+    .logo-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .logo-container img {
+      width: 250px; /* ajuste conforme necessário */
+    }
+    #login-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 300px;
+      margin: auto;
+      margin-top: 0px;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      background: #0D283D;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-container">
+    <img src="logodeltap.png" alt="Logo DeltaP" />
+  </div>
+
+  <!-- Container branco com o conteúdo do app -->
+  <div class="container">
+  <div id="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="number" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p id="error-msg" class="error"></p>
+  </div>
+
+  <script>
+    // URL do seu Web App do Google Apps Script – use a mesma URL que funciona no index.html.
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyQRBo2kZRXA6PgRlaQuMCQbfeZJcKonkkEz-G3B6obw_6Ccojww2z9q3fc6ylzc7ZZ/exec";
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const errorMsg = document.getElementById("error-msg");
+      
+      // Monta os parâmetros, incluindo action=login
+      const params = new URLSearchParams({ 
+        action: "login", 
+        username: username, 
+        password: password 
+      });
+      
+      try {
+        const response = await fetch(`${scriptUrl}?${params.toString()}`, { method: "GET" });
+        const result = await response.json();
+        
+        if (result.status === "Sucesso") {
+          sessionStorage.setItem("usuarioLogado", username);
+          window.location.href = "index.html";
+        } else {
+          errorMsg.innerText = result.mensagem;
+        }
+      } catch (err) {
+        console.error("Erro:", err);
+        errorMsg.innerText = "Erro na comunicação com o servidor.";
+      }
+    }
+  </script>
+</body>
+</html>
